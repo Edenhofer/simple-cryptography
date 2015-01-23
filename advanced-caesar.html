@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Look Up</title>
+<style>
+	* {
+		font-family: Arial, Helvetica, sans-serif;
+	}
+	#output {
+		font-size: 1.15em;
+		color: #474747;
+	}
+	#footer {
+		font-size: 0.95em;
+		color: #999999;
+	}
+	body {
+		margin-left: auto;
+		margin-right: auto;
+		width: 30%;
+		min-height: 6em;
+	}
+	#input_query {
+		color: #474747;
+		min-width: 25em;
+		min-height: 1.5em;
+	}
+	#input_alphabet_one {
+		font-size: 0.75em;
+		min-width: 13em;
+		min-height: 0.8em;
+		color: #999999;
+	}
+	#input_alphabet_two {
+		font-size: 0.75em;
+		min-width: 13em;
+		min-height: 0.8em;
+		color: #999999;
+	}
+	button[type=btn] {
+		height: 2.25em;
+		background-color: #4488ee;
+		color: #f2f2f2;
+		border: 0px solid;
+		border-radius: 3px;
+	}
+	button[type=btn]:hover {
+		background-color: #4475ee;
+	}
+	button[type=link] {
+		width: 70px;
+		height: 25px;
+		font-size: 1em;
+		background-color: #ffffff;
+		color: #4488ee;
+		border: 0px solid;
+		border-radius: 3px;
+	}
+	button[type=link]:hover {
+		color: #3a75cc;
+		cursor:pointer;
+	}
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	// Redirecting to paypal whenever the donate button is clicked
+	document.getElementById("donate").addEventListener("click", function (){
+		window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9ZAYWC36LQVZQ&submit.x=35&submit.y=2", "_blank");
+	});
+	// Displaying the options whenever the corresponding button is clicked
+	document.getElementById("options").addEventListener("click", function (){
+		document.getElementById('input_alphabets').style.display = document.getElementById('input_alphabets').style.display === 'none' ? '' : 'none';
+	});
+	// Starting the search whenever the button is clicked
+	document.getElementById("translate").addEventListener("click", function (){
+		document.getElementById('output').innerHTML = translate(document.getElementById("input_query").value);
+	});
+	// Starting the search whenever enter is pressed
+	document.onkeydown = function(event) {
+		var code = event.keyCode;
+		if (!event) event = window.event;
+		if (event.charCode && code == 0) code = event.charCode;
+
+		if (code == 13) document.getElementById('output').innerHTML = translate(document.getElementById("input_query").value);
+	};
+
+	// Trigger the search if the search-button is pressed
+	function translate(data){
+		var alphabet_one = document.getElementById("input_alphabet_one").value;
+		var alphabet_two = document.getElementById("input_alphabet_two").value;
+		var tmp = "";
+		var n = 0;
+		var i = 0;
+		var result = "";
+
+		// Checking that there is a valid query
+		if (data == "") return;
+		// Checking that boths alphabets have the same length
+		if (alphabet_one.length != alphabet_two.length) {
+			return "<br><br><i><b>You should pick two alphabets which share the same length!</b></i>";
+		}
+
+		// Iterating through all possible shifts (excluding a whole shift: "alphabet_two.length - 1")
+		for (n = 0; n < alphabet_two.length - 1; n++) {
+			alphabet_two = alphabet_two.charAt(alphabet_two.length - 1) + alphabet_two.slice(0, -1);
+			tmp = "";
+
+			// Doing the crypto things
+			for (i = 0; i < data.length; i++) {
+				tmp += alphabet_two.charAt(alphabet_one.indexOf(data.charAt(i)));
+			}
+
+			// Putting together the result
+			result += "<tr><td>(" + (n + 1) + ")<span style='padding: 0.4em;'></td><td>" + tmp + "</td><tr>";
+		}
+		
+		return "<br><br><i><b>I iterated through all possible combinations and here they are:</b></i><br><table>" + result + "</table>";
+	}
+};
+</script>
+</head>
+<body>
+	<div>
+		<br><br><br>
+	</div>
+	<div>
+		<input type="text" id="input_query" autofocus="autofocus">
+		<span style="padding: 0.4em;"></span>
+		<button type="btn" id="translate">&nbsp;&nbsp;&nbsp;DO&nbsp;STH&nbsp;&nbsp;&nbsp;</button>
+		<br><br>
+		<div id="input_alphabets" style="display:none;">
+			<input type="text" id="input_alphabet_one" name="input_alphabet_one" value="pqaywsxedcrfvtgbzhnujmikol">
+			<span style="padding: 0.4em;"></span>
+			<input type="text" id="input_alphabet_two" name="input_alphabet_two" value="abcdefghijklmnopqrstuvwxyz">
+		</div>
+	</div>
+	<div id="footer">
+		<p>
+			<i>&copy; Gordian Edenhofer</i>
+			<span style="padding: 0.4em;">&nbsp;-&nbsp;</span>
+			<button type="link" id="donate"><i>Donate</i></button>
+			<span style="padding: 3.5em;"></span>
+			<button type="link" id="options">Options</button>
+		</p>
+	</div>
+	<div id="output"><br><br><b><i>Here are some examples:</i></b><br>zqzqkhsskkpucxzcupipc<br>dkqzejsquidmhzgjyiwom<br>idqthczfpuctmhgcypfcx<br>ptczkjskkfuidtsnjcoci</div>
+</body>
+</html>
